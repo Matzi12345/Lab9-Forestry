@@ -15,14 +15,16 @@
 #    - Biomass_Equation.csv
 # 4. After uploading, click on each file in GitHub and find the "Raw" button.
 # 5. Copy the raw URL for each file, as you will need it to read the data in R.
-
+library(dplyr)
+install.packages('skimr')
+library(skimr)
 ## Step 1.2: Read the U2_2017data.csv File from GitHub
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # The `read.csv()` function reads a CSV file directly from an online source.
 # Ensure you use the correct "raw" URL for the file.
 
 #----------------
-#u2_data <- read.csv()
+u2_data <- read.csv("https://raw.githubusercontent.com/Matzi12345/Lab9-Forestry/refs/heads/main/U2_2017data.csv?token=GHSAT0AAAAAADBUOZV3VLGRY2AURYHZAJTAZ7PD7QQ")
 #----------------
 
 ### Step 1.3: Explore the structure and summary of the dataframe
@@ -30,9 +32,11 @@
 # Use str(), skimr::skim(), and dplyr::glimpse() to understand the dataframe.
 
 #----------------
-
+str(u2_data)
+skimr::skim(u2_data)
+dplyr::glimpse(u2_data)
 #----------------
-
+print(u2_data)
 ### Step 1.4: Remove missing values from the DBH and Code columns using dplyr
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Consider using dplyr's filter() function to exclude rows with NA values in these columns.
@@ -42,7 +46,7 @@
 # Implement your solution using this approach.
 
 #----------------
-#u2_data <- 
+u2_data <- u2_data %>% filter(!is.na(DBH), !is.na(Code))
 #----------------
 
 ### Step 1.5: Keep only overstory trees (Class = "O") using dplyr
@@ -55,7 +59,7 @@
 # Implement your solution using this approach.
 
 #----------------
-#u2_data <-
+u2_data <- u2_data %>% filter(Class =='O')
 #----------------
 
 ### Step 1.6: Read the Species_Codes.csv File and Merge It with u2_data_overstory
@@ -64,7 +68,7 @@
 # Make sure to use the "Raw" URL of the file.
 
 #----------------     
-#SppCode <- read.csv()
+SppCode <- read.csv("https://raw.githubusercontent.com/Matzi12345/Lab9-Forestry/refs/heads/main/Species_Codes.csv?token=GHSAT0AAAAAADBUOZV2N5OY4IBXNJJHE7GEZ7PEAAA")
 #---------------- 
 
 # Merge u2_data with SppCode using merge.data.frame.
@@ -79,7 +83,7 @@
 # Implement your solution using this approach and store the result in trees_merge.
 
 #----------------
-#trees_merge <- merge() 
+trees_merge <- merge(x = u2_data, y =SppCode, by.x = "Code",by.y = "SppCode",all.x = TRUE) 
 #----------------
 
 ### Step 1.7: Create a new dataset named trees
@@ -92,13 +96,15 @@
 # Implement your solution using this approach.
 
 #----------------
-#trees <- trees_merge %>%
+trees <- trees_merge %>% dplyr::select(Plot, Code, Genus, Common.name, DBH, Chojnacky_Code)
+#----------------
 #----------------  
 
 # Checkpoint: Review the Largest DBH Values
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Use the following code to verify your results:
-#head(trees %>% arrange(desc(DBH)))
+head(trees %>% arrange(desc(DBH)))
+
 
 # Your results should look similar to this:
 #     Plot Code        Genus  Common.name  DBH Chojnacky_Code

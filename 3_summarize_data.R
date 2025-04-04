@@ -19,7 +19,9 @@
 #   - Add the result as a new column named `BA` to `sum_u2_BA`.
 
 #----------------
-#sum_u2_BA <-  trees %>%
+sum_u2_BA <- trees %>%
+  dplyr::group_by(Plot) %>%
+  dplyr::summarise(BA = sum(BA_pa))
 #----------------
 
 
@@ -29,7 +31,9 @@
 #   - Add the result as a new column named `TPA` to `sum_u2_TPA`.
 
 #----------------
-#sum_u2_TPA <- trees %>%
+sum_u2_TPA <- trees %>%
+  dplyr::group_by(Plot) %>%
+  dplyr::summarise(TPA = sum(TPA))
 #----------------
 
 
@@ -38,18 +42,19 @@
 #   - Use `dplyr::inner_join()` to combine `sum_u2_BA` and `sum_u2_TPA` based on the `Plot` column.
 # Example of merging dataframes using dplyr:
 # new_df_name <- dataframe1 %>% inner_join(dataframe2, by = "common_column")
-
+print(sum_u2)
 #----------------
-#sum_u2 <- sum_u2_BA %>%
+sum_u2 <- sum_u2_BA %>%
+  inner_join(sum_u2_TPA, by = "Plot")
 #----------------
 
 # Question: Which plot has the maximum basal area?
 # Example of sorting data using dplyr:
 #   dataframe %>% arrange(desc(column_to_sort_by))
 # YOUR ANSWER
-
+#E3
 #----------------
-#sum_u2 %>% 
+sum_u2 %>% arrange(desc(BA))
 #----------------
 
 
@@ -57,7 +62,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Use the following code to verify your results:
 #head(sum_u2 %>% arrange(desc(TPA)))
-
+head(sum_u2 %>% arrange(desc(TPA)))
 # Your results should look similar to this:
 
 #     A tibble: 6 × 3

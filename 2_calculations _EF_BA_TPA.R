@@ -20,26 +20,25 @@
 
 ### Step 2.1: Calculate Expansion Factor (EF)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Plot radius = 58.5 ft.
-# Plot area in acres = (π × plot_radius²) / 43,560. Square Feet to Acres Conversion: One acre is equal to 43,560 square feet.
-# EF = 1 / plot area in acres.
-# Calculate the expansion factor (EF) and add it as a new column to the trees dataframe.
-
+plot_radius <- 58.5  
+plot_area_acres <- (pi * plot_radius^2) / 43560
+EF <- 1 / plot_area_acres
 #----------------
 #plot_radius <-    # in feet
 #plot_area_acres <-  
 #EF <-  
 #----------------     
 
+
 # Add EF as a new column
 # You can use either the `$` operator or `dplyr::mutate()` to add EF.
-
+trees$EF <- round(EF)
 #----------------
 
 #----------------
 
 # Question: What is the value of EF? Round your answer to the nearest whole number.
-
+round(EF)
 
 ### Step 2.2: Calculate Basal Area (BA) and Trees Per Acre (TPA)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,25 +49,25 @@
 #   - Add the result as a new column named `dia_ft` to the trees dataframe.
 
 #----------------
-# trees
+trees <- trees %>% dplyr::mutate(dia_ft = DBH / 12)
 #----------------
 
 # Calculate BA per tree:  BA = π × (diameter in feet / 2)^2.
 #   - Add the result as a new column named `BA` to the trees dataframe.
 #----------------
-# trees
+trees <- trees %>% dplyr::mutate(BA = pi * (dia_ft / 2)^2)
 #----------------
 
 # Calculate BA per acre: BA_pa = BA × EF.
 #   - Add the result as a new column named `BA_pa` to the trees dataframe.
 #----------------
-# trees
+trees <- trees %>% dplyr::mutate(BA_pa = BA * EF)
 #----------------
 
 # Calculate TPA: TPA = 1 × EF.
 #   - Add the result as a new column named `TPA` to the trees dataframe.
 #----------------
-# trees
+trees <- trees %>% dplyr::mutate(TPA = 1 * EF)
 #----------------
 
 
@@ -76,7 +75,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Use the following code to verify your results:
 #head(trees %>% arrange(desc(BA_pa)))
-
+head(trees %>% dplyr::arrange(desc(BA_pa)))
 # Your results should look similar to this:
 
 #      Plot Code        Genus  Common.name  DBH Chojnacky_Code EF   dia_ft       BA    BA_pa TPA

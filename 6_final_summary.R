@@ -17,7 +17,8 @@
 # Implement this step to merge all relevant data into `sum_u2`.
 
 #----------------
-#sum_u2 <- sum_u2 %>%
+sum_u2 <- sum_u2 %>%
+  left_join(dom_cnt, by = "Plot")
 #----------------
 
 ### Step 6.1.1: Add Species Information and Rename Columns
@@ -35,9 +36,10 @@
 # Implement this step to add species information and rename columns.
 
 #----------------
-#sum_u2 <- sum_u2 %>%
+sum_u2 <- sum_u2 %>%
+  left_join(trees %>% select(Code, Common.name) %>% distinct(), by = c("Code" = "Code"))
 
-#sum_u2 <- sum_u2 %>% rename()
+sum_u2 <- sum_u2 %>% rename(Dom_species = Code, Abundance = n)
 #----------------
 
 ### Step 6.3: Convert Biomass Units
@@ -51,7 +53,7 @@
 # Implement this step to convert biomass units.
 
 #----------------
-
+sum_u2$bm_pa <- sum_u2$bm_pa / 1000
 #----------------
 
 ### Step 6.4: Apply Dominance Threshold
@@ -66,13 +68,17 @@
 # Implement this step to apply the dominance threshold.
 
 #----------------
-#sum_u2 <-
+sum_u2 <- sum_u2 %>%
+  mutate(Dom_species = ifelse(rel_abd < 50, "Mixed", Dom_species),
+         Common.name = ifelse(rel_abd < 50, "Mixed", Common.name))
 
 # Remove duplicate rows
-#sum_u2 <- 
+sum_u2 <- sum_u2 %>% distinct(Plot, .keep_all = TRUE)
 #----------------
+print(sum_u2[sum_u2$Plot == "D5", ])
 
 # Question 9: What’s the dominant species of plot D5 now? Compare with your previous answer.
+#mixed
 
 ### Step 6.5: Save the Final Dataset and Commit to GitHub
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,5 +92,5 @@
 # Implement this step to save the final dataset.
 
 #----------------
-#write.csv()
+write.csv(sum_u2, "sum_u2_final.csv", row.names = FALSE)
 #----------------

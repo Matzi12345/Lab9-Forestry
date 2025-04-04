@@ -16,7 +16,9 @@
 # Implement this step to count the abundance of each species by plot.
       
 #----------------
-#tree_cnt <- trees %>%
+tree_cnt <- trees %>%
+  group_by(Plot, Code) %>%
+  tally()
 #----------------
 
 ### Step 5.2: Identify Dominant Species
@@ -31,7 +33,9 @@
 # Implement this step to identify the dominant species for each plot.
 
 #----------------
-#dom_cnt <- tree_cnt %>%
+dom_cnt <- tree_cnt %>%
+  group_by(Plot) %>%
+  filter(n == max(n))
 #----------------
 
 # Question: Does `dom_cnt` have the same number of rows as `sum_u2`? If not, what caused the difference?
@@ -55,9 +59,13 @@
 # Implement these steps to calculate total trees and species richness.
 
 #----------------
-#tree_total <- tree_cnt %>%
+tree_total <- tree_cnt %>%
+  group_by(Plot) %>%
+  summarise(Ttl_Trees = sum(n))
 
-#richness <- tree_cnt %>%
+richness <- tree_cnt %>%
+  group_by(Plot) %>%
+  summarise(richness = dplyr::n_distinct(Code))
 #----------------
 
 # Merge the dominant species data with the total trees and richness data.
@@ -71,12 +79,14 @@
 # Implement this step to merge the dominant species data with total trees and richness.
 
 #----------------
-#dom_cnt <- dom_cnt %>%
+dom_cnt <- dom_cnt %>%
+  left_join(tree_total, by = "Plot") %>%
+  left_join(richness, by = "Plot")
 #----------------
 
 # Question: What’s the most abundant species at plot D5?
-
-
+trees %>% dplyr::filter(Plot == "D5") %>% dplyr::group_by(Code) %>% tally() %>% dplyr::arrange(desc(n))
+#Cho
 
 ### Step 5.4: Calculate Relative Abundance
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,16 +95,21 @@
 #   - Round the relative abundance to one decimal place.
 
 #----------------
-#dom_cnt <- dom_cnt %>%
+dom_cnt <- dom_cnt %>%
+  mutate(rel_abd = round((n / Ttl_Trees) * 100, 1))
 #----------------
 
 # Question 7: How many trees are there at plot A5?
-# Question 8: How many different tree species are there at plot D1?
+#24
+tree_total %>% filter(Plot == "A5")
 
+# Question 8: How many different tree species are there at plot D1?
+richness %>% filter(Plot == "D1")
+#7
 # Checkpoint: Review the Largest rel_abd Values
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Use the following code to verify your results:
-#head(dom_cnt %>% arrange(desc(rel_abd)))
+head(dom_cnt %>% arrange(desc(rel_abd)))
 
 #     # A tibble: 6 × 6
 #     # Groups:   Plot [6]
