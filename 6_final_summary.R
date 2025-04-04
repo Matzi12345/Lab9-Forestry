@@ -94,3 +94,15 @@ print(sum_u2[sum_u2$Plot == "D5", ])
 #----------------
 write.csv(sum_u2, "sum_u2_final.csv", row.names = FALSE)
 #----------------
+sum_u2 %>% arrange(desc(BA))
+sum_u2 %>% arrange(desc(bm_pa))
+trees %>% dplyr::filter(Plot == "D5") %>% dplyr::group_by(Code) %>% tally() %>% dplyr::arrange(desc(n))
+tree_total %>% filter(Plot == "A5")
+richness %>% filter(Plot == "D1")
+
+hist(sum_u2$TPA, main = "Histogram of TPA", xlab = "Trees Per Acre")
+hist(sum_u2$BA, main = "Histogram of BA", xlab = "Basal Area")
+hist(sum_u2$bm_pa, main = "Histogram of Biomass", xlab = "Biomass (tons per acre)")
+
+
+sum_u2 %>% filter(Dom_species == "SUM") %>% tally()
